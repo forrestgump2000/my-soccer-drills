@@ -77,7 +77,10 @@
       b.style.animationDelay = `${i * 15}ms`;
       b.setAttribute("aria-label", `Box ${i}${opened ? " (opened)" : ""}`);
       const times = st.done[i] || 0;
-      b.innerHTML = `<span>${i}</span>${opened ? `<i>${times ? "×" + times : "👀"}</i>` : ""}`;
+      b.innerHTML =
+        `<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#${opened ? "gift-open" : "gift"}"/></svg>` +
+        `<span class="num">${i}</span>` +
+        (opened && times ? `<i class="count">×${times}</i>` : "");
       b.addEventListener("click", () => openBox(i));
       grid.appendChild(b);
     }
@@ -121,22 +124,77 @@
 
     if (already) { $("#reveal").hidden = false; return; }
 
-    const op = $("#opening");
-    $("#openNum").textContent = num;
-    op.classList.remove("pop");
-    op.hidden = false;
-    // restart shake animation
-    const bb = op.querySelector(".big-box");
-    bb.style.animation = "none"; void bb.offsetWidth; bb.style.animation = "";
-    setTimeout(() => op.classList.add("pop"), 600);
-    setTimeout(() => {
-      op.hidden = true;
-      $("#reveal").hidden = false;
-      confetti(40);
-      renderGrid();
-      updateCounts();
-    }, 1000);
+    playOpening(num);
   }
+
+  // ---- Opening scene: drop in → shake & charge → burst → card ----
+  let timers = [];
+  function finishOpening() {
+    timers.forEach(clearTimeout); timers = [];
+    const op = $("#opening");
+    if (op.hidden) return;
+    op.hidden = true;
+    op.className = "overlay opening";
+    $("#reveal").hidden = false;
+    confetti(40);
+    renderGrid();
+    updateCounts();
+  }
+  function burstParticles() {
+    const parts = $("#parts");
+    parts.innerHTML = "";
+    const colors = ["#ffcc33", "#ffffff", "#ffe27a", getComputedStyle(document.documentElement).getPropertyValue("--cat").trim() || "#ff5a36"];
+    const n = 26;
+    for (let i = 0; i < n; i++) {
+      const p = document.createElement("i");
+      const ang = (i / n) * Math.PI * 2 + Math.random() * 0.3;
+      const dist = 110 + Math.random() * 90;
+      const star = i % 3 === 0;
+      if (star) p.className = "star";
+      p.style.setProperty("--dx", `${Math.cos(ang) * dist}px`);
+      p.style.setProperty("--dy", `${Math.sin(ang) * dist}px`);
+      p.style.setProperty("--rot", `${(Math.random() - 0.5) * 540}deg`);
+      p.style.setProperty("--s", `${star ? 18 + Math.random() * 10 : 8 + Math.random() * 6}px`);
+      p.style.setProperty("--r", Math.random() < 0.5 ? "50%" : "3px");
+      p.style.setProperty("--c", colors[i % colors.length]);
+      parts.appendChild(p);
+    }
+  }
+  function playOpening(num) {
+    const op = $("#opening");
+    const label = $("#openLabel");
+    $("#openNum").textContent = num;
+    label.textContent = `Box #${num}…`;
+    label.classList.remove("pop");
+    $("#parts").innerHTML = "";
+    op.className = "overlay opening";
+    op.hidden = false;
+    // restart drop-in animation
+    const stage = op.querySelector(".stage");
+    stage.style.animation = "none"; void stage.offsetWidth; stage.style.animation = "";
+
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) { finishOpening(); return; }
+
+    requestAnimationFrame(() => op.classList.add("charging"));
+    timers.push(setTimeout(() => {
+      op.classList.remove("charging");
+      op.classList.add("charging-done", "burst");
+      burstParticles();
+      label.textContent = "⚽ Here's your drill!";
+      void label.offsetWidth; label.classList.add("pop");
+    }, 1250));
+    timers.push(setTimeout(finishOpening, 2050));
+  }
+
+  // Idle wiggle: a random closed box shakes now and then to tease you.
+  setInterval(() => {
+    if (!$("#boxes").classList.contains("active") || !$("#opening").hidden || !$("#reveal").hidden) return;
+    const closed = [...document.querySelectorAll(".box:not(.opened)")];
+    if (!closed.length) return;
+    const b = closed[Math.floor(Math.random() * closed.length)];
+    b.classList.add("wiggle");
+    setTimeout(() => b.classList.remove("wiggle"), 950);
+  }, 1800);
 
   function confetti(n) {
     const box = $("#confetti");
@@ -163,6 +221,7 @@
   });
   $("#doneBtn").addEventListener("click", () => { markDone(); $("#reveal").hidden = true; confetti(25); });
   $("#againBtn").addEventListener("click", () => { markDone(); replaySteps(); confetti(15); });
+  $("#opening").addEventListener("click", finishOpening);
   $("#reveal").addEventListener("click", (e) => { if (e.target.id === "reveal") $("#reveal").hidden = true; });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") $("#reveal").hidden = true; });
 
