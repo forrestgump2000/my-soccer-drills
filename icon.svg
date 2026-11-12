@@ -1,47 +1,55 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#1bbf60"/>
-      <stop offset="1" stop-color="#0b7a3b"/>
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e2f3e8"/>
     </linearGradient>
-    <clipPath id="ballClip"><circle cx="256" cy="168" r="96"/></clipPath>
+    <radialGradient id="fade" cx="256" cy="200" r="260" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+      <stop offset=".75" stop-color="#fff" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="rayMask"><rect width="512" height="512" fill="url(#fade)"/></mask>
+    <radialGradient id="glow" cx="256" cy="200" r="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff3c2" stop-opacity="1"/>
+      <stop offset=".45" stop-color="#ffcc33" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#ffcc33" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="round"><rect width="512" height="512" rx="112"/></clipPath>
   </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <circle cx="256" cy="256" r="150" fill="none" stroke="#ffffff" stroke-opacity=".18" stroke-width="10"/>
-  <!-- sparkles -->
-  <g fill="#ffcc33">
-    <path d="M96 120 l10 24 24 10 -24 10 -10 24 -10 -24 -24 -10 24 -10z"/>
-    <path d="M412 92 l8 18 18 8 -18 8 -8 18 -8 -18 -18 -8 18 -8z"/>
-    <path d="M420 230 l6 14 14 6 -14 6 -6 14 -6 -14 -14 -6 14 -6z"/>
+  <g clip-path="url(#round)">
+    <rect width="512" height="512" fill="url(#bg)"/>
+    <g fill="#ffcc33" opacity=".55" mask="url(#rayMask)"><polygon points="256.0,200.0 223.0,-218.7 289.0,-218.7"/><polygon points="256.0,200.0 385.8,-199.4 446.7,-174.2"/><polygon points="256.0,200.0 528.8,-119.4 575.4,-72.8"/><polygon points="256.0,200.0 630.2,9.3 655.4,70.2"/><polygon points="256.0,200.0 674.7,167.0 674.7,233.0"/><polygon points="256.0,200.0 655.4,329.8 630.2,390.7"/><polygon points="256.0,200.0 575.4,472.8 528.8,519.4"/><polygon points="256.0,200.0 446.7,574.2 385.8,599.4"/><polygon points="256.0,200.0 289.0,618.7 223.0,618.7"/><polygon points="256.0,200.0 126.2,599.4 65.3,574.2"/><polygon points="256.0,200.0 -16.8,519.4 -63.4,472.8"/><polygon points="256.0,200.0 -118.2,390.7 -143.4,329.8"/><polygon points="256.0,200.0 -162.7,233.0 -162.7,167.0"/><polygon points="256.0,200.0 -143.4,70.2 -118.2,9.3"/><polygon points="256.0,200.0 -63.4,-72.8 -16.8,-119.4"/><polygon points="256.0,200.0 65.3,-174.2 126.2,-199.4"/></g>
+    <circle cx="256" cy="200" r="180" fill="url(#glow)"/>
   </g>
-  <!-- ball -->
-  <g>
-    <circle cx="256" cy="168" r="96" fill="#ffffff"/>
-    <g clip-path="url(#ballClip)" fill="#12261a">
-      <polygon points="256,132 290,157 277,197 235,197 222,157"/>
-      <polygon points="256,72 282,80 272,104 240,104 230,80"/>
-      <polygon points="330,140 352,150 352,190 326,176 318,150"/>
-      <polygon points="182,140 160,150 160,190 186,176 194,150"/>
-      <polygon points="300,232 322,212 340,236 320,262 296,256"/>
-      <polygon points="212,232 190,212 172,236 192,262 216,256"/>
+  <!-- open gift, same art as the game -->
+  <g transform="translate(84 84) scale(3.55)">
+    <ellipse fill="#14281e" opacity=".12" cx="50" cy="93" rx="36" ry="5"/>
+    <rect fill="#c93a1c" x="16" y="40" width="68" height="10" rx="4"/>
+    <g transform="translate(0 -7) rotate(-14 50 36)">
+      <circle fill="#fff" stroke="#1b2a21" stroke-width="2.4" cx="50" cy="36" r="16"/>
+      <polygon fill="#1b2a21" points="50,29.5 56.5,34 54,41.5 46,41.5 43.5,34"/>
+      <path fill="#1b2a21" d="M38 27 L42 30 L40 35 L35.5 33 Z M62 27 L58 30 L60 35 L64.5 33 Z M50 20.5 L54 22 L50 24.5 L46 22Z"/>
     </g>
-    <g stroke="#12261a" stroke-width="6" stroke-linecap="round">
-      <line x1="256" y1="132" x2="256" y2="104"/>
-      <line x1="290" y1="157" x2="318" y2="150"/>
-      <line x1="222" y1="157" x2="194" y2="150"/>
-      <line x1="277" y1="197" x2="300" y2="232"/>
-      <line x1="235" y1="197" x2="212" y2="232"/>
-    </g>
-    <circle cx="256" cy="168" r="96" fill="none" stroke="#12261a" stroke-width="8"/>
+    <rect fill="#ff5a36" x="16" y="44" width="68" height="46" rx="7"/>
+    <path fill="#c93a1c" opacity=".35" d="M64 44H77a7 7 0 0 1 7 7V83a7 7 0 0 1-7 7H64Z"/>
+    <rect fill="#c93a1c" opacity=".35" x="16" y="44" width="68" height="5"/>
+    <rect fill="#ffcc33" x="44" y="44" width="12" height="46"/>
+    <circle fill="#fff" cx="50" cy="68" r="10.5"/>
+    <path fill="#ffcc33" d="M50 61.5 l2.1 4.3 4.7.7 -3.4 3.3 .8 4.7 -4.2-2.2 -4.2 2.2 .8-4.7 -3.4-3.3 4.7-.7z"/>
+    <g transform="translate(-8 6) rotate(-34 22 40) scale(.62)"><rect fill="#c93a1c" x="10" y="34" width="80" height="16" rx="6"/>
+      <rect fill="#ff7b5e" x="10" y="30" width="80" height="16" rx="6"/>
+      <rect fill="#ffcc33" x="44" y="30" width="12" height="20"/>
+      <rect fill="#fff" opacity=".35" x="16" y="33.5" width="20" height="3.5" rx="1.75"/>
+      <path fill="#ffcc33" d="M50 31 C40 10 20 14 28 28 C32 33 43 32 50 31Z"/>
+      <path fill="#ffcc33" d="M50 31 C60 10 80 14 72 28 C68 33 57 32 50 31Z"/>
+      <path fill="#e6a700" d="M50 31 C43 19 33 20 34 26 C36 30 44 31 50 31Z"/>
+      <path fill="#e6a700" d="M50 31 C57 19 67 20 66 26 C64 30 56 31 50 31Z"/>
+      <rect fill="#e6a700" x="45" y="25" width="10" height="9" rx="3.5"/></g>
+    <path fill="#ffcc33" d="M88 14 l2.4 6 6 2.4 -6 2.4 -2.4 6 -2.4 -6 -6 -2.4 6 -2.4z"/>
+    <path fill="#ffcc33" d="M78 -1 l1.5 3.6 3.6 1.5 -3.6 1.5 -1.5 3.6 -1.5 -3.6 -3.6 -1.5 3.6 -1.5z"/>
+    <circle fill="#2f80ff" cx="92" cy="40" r="2.2"/>
+    <circle fill="#8a4dff" cx="8" cy="58" r="2"/>
+    <rect fill="#12a150" x="20" y="8" width="4" height="4" rx="1" transform="rotate(20 22 10)"/>
   </g>
-  <!-- open lid -->
-  <g transform="rotate(-18 120 250)">
-    <rect x="84" y="226" width="200" height="48" rx="12" fill="#c93a1c"/>
-    <rect x="166" y="226" width="36" height="48" fill="#ffcc33"/>
-  </g>
-  <!-- box -->
-  <rect x="120" y="270" width="272" height="182" rx="24" fill="#ff5a36"/>
-  <rect x="120" y="270" width="272" height="34" rx="12" fill="#c93a1c"/>
-  <rect x="236" y="270" width="40" height="182" fill="#ffcc33"/>
-  <text x="256" y="408" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="96" fill="#ffffff" stroke="#c93a1c" stroke-width="10" paint-order="stroke">?</text>
 </svg>
