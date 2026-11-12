@@ -4,7 +4,7 @@
     passing: { label: "Passing", c: "--pass", d: "--pass-d" },
     defending: { label: "Defending", c: "--def", d: "--def-d" },
   };
-  const KEY = "my-soccer-drills-v2";
+  const KEY = "my-soccer-drills-v3";
   const PLACE_KEY = "my-soccer-drills-place";
   const $ = (s) => document.querySelector(s);
 
@@ -143,7 +143,7 @@
       ol.appendChild(li);
     });
 
-    if (already) { $("#reveal").hidden = false; return; }
+    if (already) { Sound.reveal(); $("#reveal").hidden = false; return; }
 
     playOpening(num);
   }
@@ -157,6 +157,7 @@
     op.hidden = true;
     op.className = "overlay opening";
     $("#reveal").hidden = false;
+    Sound.reveal();
     confetti(40);
     renderGrid();
     updateCounts();
@@ -196,11 +197,14 @@
 
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) { finishOpening(); return; }
 
+    Sound.land();
+    [[450, 0.3], [750, 0.6], [1000, 1]].forEach(([ms, k]) => timers.push(setTimeout(() => Sound.rustle(k), ms)));
     requestAnimationFrame(() => op.classList.add("charging"));
     timers.push(setTimeout(() => {
       op.classList.remove("charging");
       op.classList.add("charging-done", "burst");
       burstParticles();
+      Sound.burst();
       label.textContent = "⚽ Here's your drill!";
       void label.offsetWidth; label.classList.add("pop");
     }, 1250));
@@ -232,19 +236,33 @@
   }
 
   // Events
-  document.querySelectorAll(".seg-btn").forEach((b) => b.addEventListener("click", () => setPlace(b.dataset.place)));
-  document.querySelectorAll(".cat").forEach((b) => b.addEventListener("click", () => openCategory(b.dataset.cat)));
-  $("#backHome").addEventListener("click", () => { updateCounts(); show("home"); });
+  document.querySelectorAll(".seg-btn").forEach((b) => b.addEventListener("click", () => {
+    if (b.dataset.place !== place) Sound.toggleSwitch(b.dataset.place === "outdoor");
+    setPlace(b.dataset.place);
+  }));
+  document.querySelectorAll(".cat").forEach((b) => b.addEventListener("click", () => { Sound.select(); openCategory(b.dataset.cat); }));
+  $("#backHome").addEventListener("click", () => { Sound.back(); updateCounts(); show("home"); });
   $("#resetCat").addEventListener("click", () => {
     if (confirm(`Close all ${PLACES[place].label.slice(3)} ${CATS[current].label} boxes and shuffle new drills inside?`)) {
       state[`${place}:${current}`] = { order: shuffle(deck(current).length), opened: {}, done: {} };
-      save(); renderGrid(); updateCounts();
+      save(); renderGrid(); updateCounts(); Sound.shuffle();
     }
   });
-  $("#doneBtn").addEventListener("click", () => { markDone(); $("#reveal").hidden = true; confetti(25); });
-  $("#againBtn").addEventListener("click", () => { markDone(); replaySteps(); confetti(15); });
+  $("#doneBtn").addEventListener("click", () => { Sound.done(); markDone(); $("#reveal").hidden = true; confetti(25); });
+  $("#againBtn").addEventListener("click", () => { Sound.again(); markDone(); replaySteps(); confetti(15); });
   $("#opening").addEventListener("click", finishOpening);
-  $("#reveal").addEventListener("click", (e) => { if (e.target.id === "reveal") $("#reveal").hidden = true; });
+  $("#reveal").addEventListener("click", (e) => { if (e.target.id === "reveal") { Sound.tap(); $("#reveal").hidden = true; } });
+
+  // Sound on/off (browsers only allow audio after the first tap)
+  const soundBtn = $("#soundBtn");
+  const paintSound = () => {
+    soundBtn.innerHTML = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/>${Sound.on ? '<path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/>' : '<path d="M16 9.5l5 5M21 9.5l-5 5"/>'}</svg>`;
+    soundBtn.classList.toggle("off", !Sound.on);
+    soundBtn.setAttribute("aria-label", Sound.on ? "Sound on" : "Sound off");
+  };
+  soundBtn.addEventListener("click", () => { Sound.toggle(); paintSound(); });
+  paintSound();
+  document.addEventListener("pointerdown", () => Sound.unlock(), { once: true });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") $("#reveal").hidden = true; });
 
   setPlace(place);
