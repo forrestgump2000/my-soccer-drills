@@ -4,7 +4,8 @@
     passing: { label: "Passing", c: "--pass", d: "--pass-d" },
     defending: { label: "Defending", c: "--def", d: "--def-d" },
   };
-  const KEY = "my-soccer-drills-v1";
+  const KEY = "my-soccer-drills-v2";
+  const PLACE_KEY = "my-soccer-drills-place";
   const $ = (s) => document.querySelector(s);
 
   // state[cat] = { order: [shuffled drill indexes], opened: { boxNum: drillIndex } }
@@ -20,15 +21,33 @@
     }
     return a;
   };
+  // Each place + category has its own 30 boxes.
+  let place = "indoor";
+  try { if (localStorage.getItem(PLACE_KEY) === "outdoor") place = "outdoor"; } catch {}
+  const deck = (cat) => DRILLS[place][cat];
   const catState = (cat) => {
-    if (!state[cat] || !Array.isArray(state[cat].order) || state[cat].order.length !== DRILLS[cat].length) {
-      state[cat] = { order: shuffle(DRILLS[cat].length), opened: {}, done: {} };
+    const k = `${place}:${cat}`;
+    if (!state[k] || !Array.isArray(state[k].order) || state[k].order.length !== deck(cat).length) {
+      state[k] = { order: shuffle(deck(cat).length), opened: {}, done: {} };
     }
-    if (!state[cat].done) state[cat].done = {};
-    return state[cat];
+    if (!state[k].done) state[k].done = {};
+    return state[k];
   };
 
   let current = "shooting";
+
+  const PLACES = {
+    indoor: { label: "🏠 Indoors", note: "Use a soft ball and clear some space." },
+    outdoor: { label: "🌳 Outdoors", note: "Grab a ball and head to a yard, park, or field." },
+  };
+  function setPlace(p) {
+    place = p;
+    try { localStorage.setItem(PLACE_KEY, p); } catch {}
+    $(".seg").dataset.place = p;
+    document.querySelectorAll(".seg-btn").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.place === p)));
+    $("#placeNote").textContent = PLACES[p].note;
+    updateCounts();
+  }
   let currentBox = 1;
 
   function timesText(n) {
@@ -90,6 +109,8 @@
     current = cat;
     setTheme(cat);
     $("#catTitle").textContent = CATS[cat].label;
+    $("#placeTag").textContent = PLACES[place].label;
+    $("#placeTag").classList.toggle("out", place === "outdoor");
     renderGrid();
     show("boxes");
   }
@@ -106,11 +127,11 @@
       st.opened[num] = idx;
       save();
     }
-    const drill = DRILLS[current][idx];
+    const drill = deck(current)[idx];
     currentBox = num;
     $("#drillBadge").textContent = `Box #${num}`;
-    $("#drillPlace").textContent = drill.place === "outdoor" ? "🌳 Outdoors" : "🏠 Indoors";
-    $("#drillPlace").classList.toggle("out", drill.place === "outdoor");
+    $("#drillPlace").textContent = PLACES[place].label;
+    $("#drillPlace").classList.toggle("out", place === "outdoor");
     $("#drillTimes").textContent = timesText(st.done[num] || 0);
     $("#drillCat").textContent = CATS[current].label;
     $("#drillName").textContent = drill.name;
@@ -211,11 +232,12 @@
   }
 
   // Events
+  document.querySelectorAll(".seg-btn").forEach((b) => b.addEventListener("click", () => setPlace(b.dataset.place)));
   document.querySelectorAll(".cat").forEach((b) => b.addEventListener("click", () => openCategory(b.dataset.cat)));
   $("#backHome").addEventListener("click", () => { updateCounts(); show("home"); });
   $("#resetCat").addEventListener("click", () => {
-    if (confirm(`Close all ${CATS[current].label} boxes and shuffle new drills inside?`)) {
-      state[current] = { order: shuffle(DRILLS[current].length), opened: {}, done: {} };
+    if (confirm(`Close all ${PLACES[place].label.slice(3)} ${CATS[current].label} boxes and shuffle new drills inside?`)) {
+      state[`${place}:${current}`] = { order: shuffle(deck(current).length), opened: {}, done: {} };
       save(); renderGrid(); updateCounts();
     }
   });
@@ -225,5 +247,5 @@
   $("#reveal").addEventListener("click", (e) => { if (e.target.id === "reveal") $("#reveal").hidden = true; });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") $("#reveal").hidden = true; });
 
-  updateCounts();
+  setPlace(place);
 })();

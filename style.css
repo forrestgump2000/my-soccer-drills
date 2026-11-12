@@ -45,6 +45,29 @@ h1 span { color: var(--grass-1); }
 .tag { font-size: 18px; font-weight: 800; color: #4d5f55; margin: 0; }
 .tag small { display: inline-block; margin-top: 8px; font-size: 14px; font-weight: 600; color: #7a8a81; }
 
+.place-pick { text-align: center; margin: 0 0 22px; }
+.pick-label { margin: 0 0 10px; font-weight: 800; font-size: 15px; letter-spacing: .4px; text-transform: uppercase; color: #6b7c72; }
+.seg {
+  position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 6px; gap: 0;
+  background: #fff; border-radius: 22px; box-shadow: 0 0 0 1px #e1e8e3, 0 4px 0 #dfe6e1, 0 10px 22px rgba(20,40,30,.06);
+}
+.seg-thumb {
+  position: absolute; top: 6px; bottom: 6px; left: 6px; width: calc(50% - 6px); border-radius: 17px;
+  background: var(--grass-1); box-shadow: 0 4px 0 var(--grass-2);
+  transition: transform .35s cubic-bezier(.3, 1.5, .5, 1), background .3s, box-shadow .3s;
+}
+.seg[data-place="outdoor"] .seg-thumb { transform: translateX(100%); background: #f59e0b; box-shadow: 0 4px 0 #c27803; }
+.seg-btn {
+  position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 8px 16px; background: none; border-radius: 17px;
+  font-family: "Lilita One", sans-serif; font-size: clamp(20px, 6vw, 26px); color: #8a998f; transition: color .25s;
+}
+.seg-btn[aria-checked="true"] { color: #fff; }
+.seg-emoji { font-size: 1.1em; transition: transform .35s cubic-bezier(.3, 1.8, .5, 1); }
+.seg-btn[aria-checked="true"] .seg-emoji { transform: scale(1.2) rotate(-8deg); }
+.pick-note { margin: 10px 0 0; font-size: 14px; font-weight: 600; color: #7a8a81; }
+.place-tag { display: inline-block; margin-right: 4px; padding: 3px 10px; border-radius: 999px; background: #e7f6ec; color: var(--grass-2); font-size: 13px; }
+.place-tag.out { background: #fff3d6; color: #8a5a00; }
 .cats { display: grid; gap: 16px; }
 .cat {
   position: relative; display: grid; grid-template-columns: 72px 1fr; grid-template-rows: auto auto;
