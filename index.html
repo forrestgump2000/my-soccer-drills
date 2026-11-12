@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>My Soccer Drills</title>
 <meta name="description" content="Pick shooting, passing, or defending, open a mystery box, and get a fun, easy soccer drill.">
-<meta name="theme-color" content="#0b7a3b">
+<meta name="theme-color" content="#f4f7f5">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -20,7 +20,6 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="field-lines" aria-hidden="true"></div>
 
 <main id="app">
   <!-- HOME -->
@@ -28,7 +27,7 @@
     <header class="hero">
       <img src="icon.svg" alt="" class="hero-icon">
       <h1>My Soccer<br><span>Drills</span></h1>
-      <p class="tag">Pick a category. Open a mystery box. Go play!</p>
+      <p class="tag">Pick a category. Open a mystery box. Go play!<br><small>Most drills work indoors — just use a soft ball.</small></p>
     </header>
     <div class="cats">
       <button class="cat shooting" data-cat="shooting">
@@ -69,8 +68,12 @@
       <span class="cat-chip" id="drillCat">Shooting</span>
     </div>
     <h3 id="drillName">Drill</h3>
+    <div class="meta"><span id="drillPlace" class="place">🏠 Indoors</span><span id="drillTimes" class="times">Not done yet</span></div>
     <ol id="drillSteps" class="steps"></ol>
-    <button class="done" id="doneBtn">I did it! ⚽</button>
+    <div class="actions">
+      <button class="again" id="againBtn">🔁 Do it again</button>
+      <button class="done" id="doneBtn">I did it! ⚽</button>
+    </div>
   </div>
 </div>
 

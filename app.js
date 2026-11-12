@@ -22,12 +22,31 @@
   };
   const catState = (cat) => {
     if (!state[cat] || !Array.isArray(state[cat].order) || state[cat].order.length !== DRILLS[cat].length) {
-      state[cat] = { order: shuffle(DRILLS[cat].length), opened: {} };
+      state[cat] = { order: shuffle(DRILLS[cat].length), opened: {}, done: {} };
     }
+    if (!state[cat].done) state[cat].done = {};
     return state[cat];
   };
 
   let current = "shooting";
+  let currentBox = 1;
+
+  function timesText(n) {
+    return n === 0 ? "Not done yet" : n === 1 ? "✅ Done 1 time" : `✅ Done ${n} times`;
+  }
+  function markDone() {
+    const st = catState(current);
+    st.done[currentBox] = (st.done[currentBox] || 0) + 1;
+    save();
+    $("#drillTimes").textContent = timesText(st.done[currentBox]);
+    renderGrid();
+  }
+  function replaySteps() {
+    document.querySelectorAll("#drillSteps li").forEach((li) => {
+      li.style.animation = "none"; void li.offsetWidth; li.style.animation = "";
+    });
+    $("#reveal .card").scrollTop = 0;
+  }
 
   function setTheme(cat) {
     const root = document.documentElement.style;
@@ -57,7 +76,8 @@
       b.className = "box" + (opened ? " opened" : "");
       b.style.animationDelay = `${i * 15}ms`;
       b.setAttribute("aria-label", `Box ${i}${opened ? " (opened)" : ""}`);
-      b.innerHTML = `<span>${i}</span>${opened ? "<i>✅</i>" : ""}`;
+      const times = st.done[i] || 0;
+      b.innerHTML = `<span>${i}</span>${opened ? `<i>${times ? "×" + times : "👀"}</i>` : ""}`;
       b.addEventListener("click", () => openBox(i));
       grid.appendChild(b);
     }
@@ -84,7 +104,11 @@
       save();
     }
     const drill = DRILLS[current][idx];
+    currentBox = num;
     $("#drillBadge").textContent = `Box #${num}`;
+    $("#drillPlace").textContent = drill.place === "outdoor" ? "🌳 Outdoors" : "🏠 Indoors";
+    $("#drillPlace").classList.toggle("out", drill.place === "outdoor");
+    $("#drillTimes").textContent = timesText(st.done[num] || 0);
     $("#drillCat").textContent = CATS[current].label;
     $("#drillName").textContent = drill.name;
     const ol = $("#drillSteps");
@@ -116,7 +140,7 @@
 
   function confetti(n) {
     const box = $("#confetti");
-    const colors = ["#ffcc33", "#ffffff", getComputedStyle(document.documentElement).getPropertyValue("--shoot"), "#2f80ff", "#8a4dff", "#12a150"];
+    const colors = ["#ffcc33", "#ff5a36", "#2f80ff", "#8a4dff", "#12a150"];
     for (let i = 0; i < n; i++) {
       const p = document.createElement("i");
       p.style.left = Math.random() * 100 + "vw";
@@ -133,11 +157,12 @@
   $("#backHome").addEventListener("click", () => { updateCounts(); show("home"); });
   $("#resetCat").addEventListener("click", () => {
     if (confirm(`Close all ${CATS[current].label} boxes and shuffle new drills inside?`)) {
-      state[current] = { order: shuffle(DRILLS[current].length), opened: {} };
+      state[current] = { order: shuffle(DRILLS[current].length), opened: {}, done: {} };
       save(); renderGrid(); updateCounts();
     }
   });
-  $("#doneBtn").addEventListener("click", () => { $("#reveal").hidden = true; confetti(25); });
+  $("#doneBtn").addEventListener("click", () => { markDone(); $("#reveal").hidden = true; confetti(25); });
+  $("#againBtn").addEventListener("click", () => { markDone(); replaySteps(); confetti(15); });
   $("#reveal").addEventListener("click", (e) => { if (e.target.id === "reveal") $("#reveal").hidden = true; });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") $("#reveal").hidden = true; });
 
