@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1bbf60"/>
+      <stop offset="1" stop-color="#0b7a3b"/>
+    </linearGradient>
+    <clipPath id="ballClip"><circle cx="256" cy="168" r="96"/></clipPath>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="150" fill="none" stroke="#ffffff" stroke-opacity=".18" stroke-width="10"/>
+  <!-- sparkles -->
+  <g fill="#ffcc33">
+    <path d="M96 120 l10 24 24 10 -24 10 -10 24 -10 -24 -24 -10 24 -10z"/>
+    <path d="M412 92 l8 18 18 8 -18 8 -8 18 -8 -18 -18 -8 18 -8z"/>
+    <path d="M420 230 l6 14 14 6 -14 6 -6 14 -6 -14 -14 -6 14 -6z"/>
+  </g>
+  <!-- ball -->
+  <g>
+    <circle cx="256" cy="168" r="96" fill="#ffffff"/>
+    <g clip-path="url(#ballClip)" fill="#12261a">
+      <polygon points="256,132 290,157 277,197 235,197 222,157"/>
+      <polygon points="256,72 282,80 272,104 240,104 230,80"/>
+      <polygon points="330,140 352,150 352,190 326,176 318,150"/>
+      <polygon points="182,140 160,150 160,190 186,176 194,150"/>
+      <polygon points="300,232 322,212 340,236 320,262 296,256"/>
+      <polygon points="212,232 190,212 172,236 192,262 216,256"/>
+    </g>
+    <g stroke="#12261a" stroke-width="6" stroke-linecap="round">
+      <line x1="256" y1="132" x2="256" y2="104"/>
+      <line x1="290" y1="157" x2="318" y2="150"/>
+      <line x1="222" y1="157" x2="194" y2="150"/>
+      <line x1="277" y1="197" x2="300" y2="232"/>
+      <line x1="235" y1="197" x2="212" y2="232"/>
+    </g>
+    <circle cx="256" cy="168" r="96" fill="none" stroke="#12261a" stroke-width="8"/>
+  </g>
+  <!-- open lid -->
+  <g transform="rotate(-18 120 250)">
+    <rect x="84" y="226" width="200" height="48" rx="12" fill="#c93a1c"/>
+    <rect x="166" y="226" width="36" height="48" fill="#ffcc33"/>
+  </g>
+  <!-- box -->
+  <rect x="120" y="270" width="272" height="182" rx="24" fill="#ff5a36"/>
+  <rect x="120" y="270" width="272" height="34" rx="12" fill="#c93a1c"/>
+  <rect x="236" y="270" width="40" height="182" fill="#ffcc33"/>
+  <text x="256" y="408" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="96" fill="#ffffff" stroke="#c93a1c" stroke-width="10" paint-order="stroke">?</text>
+</svg>
